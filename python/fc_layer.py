@@ -4,7 +4,7 @@ from functools import reduce
 import random
 
 class Layer(object):
-    def __init__(self, layer_index, node_count):
+    def __init__(self, network, layer_index, node_count):
         '''
         初始化一层
         layer_index: 层编号
@@ -15,6 +15,7 @@ class Layer(object):
         for i in range(node_count):
             self.nodes.append(Node(layer_index, i))
         self.nodes.append(ConstNode(layer_index, node_count))
+        network.append_layer(self)
     def set_output(self, data):
         '''
         设置层的输出。当层是输入层时会用到。
