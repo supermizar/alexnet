@@ -35,39 +35,36 @@ class ConvLayer(object):
     def bp_sensitivity_map(self, sensitivity_array,
                            activator):
         '''
-        计算传递到上一层的sensitivity map
-        sensitivity_array: 本层的sensitivity map
-        activator: 上一层的激活函数
+        calculate sensitivity map passed to upstream layer
+        sensitivity_array: sensitivity map of current layer
+        activator: activator of upstream layer
         '''
-        # 处理卷积步长，对原始sensitivity map进行扩展
+        # handle stride, expand sensitivity map
         expanded_array = self.expand_sensitivity_map(
             sensitivity_array)
-        # full卷积，对sensitivitiy map进行zero padding
-        # 虽然原始输入的zero padding单元也会获得残差
-        # 但这个残差不需要继续向上传递，因此就不计算了
+        # full conv, do zp to sensitivity map
+        # though zp has epsilon, it won't take into consider cause that won't passed upstream
         expanded_width = expanded_array.shape[2]
         zp = (self.input_width +
               self.filter_width - 1 - expanded_width) / 2
         padded_array = padding(expanded_array, zp)
-        # 初始化delta_array，用于保存传递到上一层的
-        # sensitivity map
+        # init delta_array, for saving sensitivity map passed to upstream
         self.delta_array = self.create_delta_array()
-        # 对于具有多个filter的卷积层来说，最终传递到上一层的
-        # sensitivity map相当于所有的filter的
-        # sensitivity map之和
+        # for those conv layer has multi filters, sensitivity map passed to upstream finally, is sum of
+        # all filter's sensitivity map
         for f in range(self.filter_number):
             filter = self.filters[f]
-            # 将filter权重翻转180度
+            # rotate filter 180 degree
             flipped_weights = np.array(map(
                 lambda i: np.rot90(i, 2),
                 filter.get_weights()))
-            # 计算与一个filter对应的delta_array
+            # calc a filter for delta_array
             delta_array = self.create_delta_array()
             for d in range(delta_array.shape[0]):
                 conv(padded_array[f], flipped_weights[d],
                      delta_array[d], 1, 0)
             self.delta_array += delta_array
-        # 将计算结果与激活函数的偏导数做element-wise乘法操作
+        # calc element-wise of output and activator's bias-derivation
         derivative_array = np.array(self.input_array)
         element_wise_op(derivative_array,
                         activator.backward)
@@ -75,16 +72,16 @@ class ConvLayer(object):
 
     def expand_sensitivity_map(self, sensitivity_array):
         depth = sensitivity_array.shape[0]
-        # 确定扩展后sensitivity map的大小
-        # 计算stride为1时sensitivity map的大小
+        # calc sensitivity map's size
+        # calc size of sensitivity map when stride is 1
         expanded_width = (self.input_width -
                           self.filter_width + 2 * self.zero_padding + 1)
         expanded_height = (self.input_height -
                            self.filter_height + 2 * self.zero_padding + 1)
-        # 构建新的sensitivity_map
+        # construct new sensitivity_map
         expand_array = np.zeros((depth, expanded_height,
                                  expanded_width))
-        # 从原始sensitivity map拷贝误差值
+        # copy error from snesitivity map
         for i in range(self.output_height):
             for j in range(self.output_width):
                 i_pos = i * self.stride
@@ -98,22 +95,22 @@ class ConvLayer(object):
                          self.input_height, self.input_width))
 
     def bp_gradient(self, sensitivity_array):
-        # 处理卷积步长，对原始sensitivity map进行扩展
+        # handle stride, expand initial sensitivity map
         expanded_array = self.expand_sensitivity_map(
             sensitivity_array)
         for f in range(self.filter_number):
-            # 计算每个权重的梯度
+            # calc gradient of each weight
             filter = self.filters[f]
             for d in range(filter.weights.shape[0]):
                 conv(self.padded_input_array[d],
                      expanded_array[f],
                      filter.weights_grad[d], 1, 0)
-            # 计算偏置项的梯度
+            # calc the gradient of bias
             filter.bias_grad = expanded_array[f].sum()
 
     def update(self):
         '''
-        按照梯度下降，更新权重
+        update weight according to gradient descend
         '''
         for filter in self.filters:
             filter.update(self.learning_rate)
@@ -126,8 +123,8 @@ class ConvLayer(object):
 
     def forward(self, input_array):
         '''
-        计算卷积层的输出
-        输出结果保存在self.output_array
+        calc output of conv layer
+        result saved in self.output_array
         '''
         self.input_array = input_array
         self.padded_input_array = padding(input_array,
@@ -144,7 +141,7 @@ class ConvLayer(object):
 
 
 
-# 对numpy数组进行element wise操作
+# do element wise operation to numpy array
 def element_wise_op(array, op):
     for i in np.nditer(array, op_flags=['readwrite']):
         i[...] = op(i)
@@ -154,7 +151,7 @@ def conv(input_array,
          output_array,
          stride, bias):
     '''
-    计算卷积，自动适配输入为2D和3D的情况
+    calculate convolution for 2D 3D
     '''
     channel_number = input_array.ndim
     output_width = output_array.shape[1]
@@ -173,7 +170,7 @@ def get_patch(input, i, j, kernel_width, kernel_height, stride):
 
 def padding(input_array, zp):
     '''
-    为数组增加Zero padding，自动适配输入为2D和3D的情况
+    add zero padding for 2D 3D
     '''
     if zp == 0:
         return input_array
