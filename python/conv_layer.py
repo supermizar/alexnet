@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class ConvLayer(object):
     def __init__(self, network, input_width, input_height,
                  channel_number, filter_width,
@@ -34,11 +35,11 @@ class ConvLayer(object):
 
     def bp_sensitivity_map(self, sensitivity_array,
                            activator):
-        '''
+        """
         calculate sensitivity map passed to upstream layer
         sensitivity_array: sensitivity map of current layer
         activator: activator of upstream layer
-        '''
+        """
         # handle stride, expand sensitivity map
         expanded_array = self.expand_sensitivity_map(
             sensitivity_array)
@@ -109,9 +110,9 @@ class ConvLayer(object):
             filter.bias_grad = expanded_array[f].sum()
 
     def update(self):
-        '''
+        """
         update weight according to gradient descend
-        '''
+        """
         for filter in self.filters:
             filter.update(self.learning_rate)
 
@@ -122,10 +123,10 @@ class ConvLayer(object):
                 2 * zero_padding) / stride + 1
 
     def forward(self, input_array):
-        '''
+        """
         calc output of conv layer
         result saved in self.output_array
-        '''
+        """
         self.input_array = input_array
         self.padded_input_array = padding(input_array,
                                           self.zero_padding)
@@ -138,21 +139,19 @@ class ConvLayer(object):
                         self.activator.forward)
 
 
-
-
-
 # do element wise operation to numpy array
 def element_wise_op(array, op):
     for i in np.nditer(array, op_flags=['readwrite']):
         i[...] = op(i)
 
+
 def conv(input_array,
          kernel_array,
          output_array,
          stride, bias):
-    '''
+    """
     calculate convolution for 2D 3D
-    '''
+    """
     channel_number = input_array.ndim
     output_width = output_array.shape[1]
     output_height = output_array.shape[0]
@@ -161,17 +160,19 @@ def conv(input_array,
     for i in range(output_height):
         for j in range(output_width):
             output_array[i][j] = (
-                get_patch(input_array, i, j, kernel_width,
-                    kernel_height, stride) * kernel_array
-                ).sum() + bias
+                                     get_patch(input_array, i, j, kernel_width,
+                                               kernel_height, stride) * kernel_array
+                                 ).sum() + bias
+
 
 def get_patch(input, i, j, kernel_width, kernel_height, stride):
     pass
 
+
 def padding(input_array, zp):
-    '''
+    """
     add zero padding for 2D 3D
-    '''
+    """
     if zp == 0:
         return input_array
     else:
@@ -184,8 +185,8 @@ def padding(input_array, zp):
                 input_height + 2 * zp,
                 input_width + 2 * zp))
             padded_array[:,
-                zp : zp + input_height,
-                zp : zp + input_width] = input_array
+            zp: zp + input_height,
+            zp: zp + input_width] = input_array
             return padded_array
         elif input_array.ndim == 2:
             input_width = input_array.shape[1]
@@ -193,8 +194,8 @@ def padding(input_array, zp):
             padded_array = np.zeros((
                 input_height + 2 * zp,
                 input_width + 2 * zp))
-            padded_array[zp : zp + input_height,
-                zp : zp + input_width] = input_array
+            padded_array[zp: zp + input_height,
+            zp: zp + input_width] = input_array
             return padded_array
 
 
