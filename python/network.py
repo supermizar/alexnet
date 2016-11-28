@@ -64,10 +64,10 @@ class Network(object):
         """
         predict output according to input
         """
-        self.layers[0].set_output(sample)
-        for i in range(1, len(self.layers)):
+        self.layers[0].set_input(sample)
+        for i in range(0, len(self.layers)):
             self.layers[i].calc_output()
-        return map(lambda node: node.output, self.layers[-1].nodes[:-1])
+        return self.layers[-1].get_output()
 
     def dump(self):
         """
