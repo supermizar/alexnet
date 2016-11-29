@@ -64,9 +64,9 @@ class Network(object):
         """
         predict output according to input
         """
-        self.layers[0].set_input(sample)
-        for i in range(0, len(self.layers)):
-            self.layers[i].calc_output()
+        self.layers[0].forward(sample)
+        for i in range(1, len(self.layers)):
+            self.layers[i].forward(self.layers[i-1].get_output())
         return self.layers[-1].get_output()
 
     def dump(self):

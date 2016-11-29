@@ -138,6 +138,9 @@ class ConvLayer(object):
         element_wise_op(self.output_array,
                         self.activator.forward)
 
+    def get_output(self):
+        return self.output_array
+
 
 # do element wise operation to numpy array
 def element_wise_op(array, op):
