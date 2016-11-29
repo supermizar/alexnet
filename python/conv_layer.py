@@ -168,8 +168,8 @@ def conv(input_array,
                                  ).sum() + bias
 
 
-def get_patch(input, i, j, kernel_width, kernel_height, stride):
-    pass
+def get_patch(input_array, i, j, kernel_width, kernel_height, stride):
+    return input_array[:, i*stride:i*stride+kernel_width, j*stride:j*stride+kernel_height]
 
 
 def padding(input_array, zp):
