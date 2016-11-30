@@ -27,12 +27,12 @@ class Network(object):
         """
         calc delta of each layer
         """
-        output_nodes = self.layers[-1].nodes
-        for i in range(len(label)):
-            output_nodes[i].calc_output_layer_delta(label[i])
+        output_layer = self.layers[-1]
+        output_layer.calc_output_layer_delta(label)
+        downstream_layer = output_layer
         for layer in self.layers[-2::-1]:
-            for node in layer.nodes:
-                node.calc_hidden_layer_delta()
+            layer.calc_hidden_layer_delta(downstream_layer)
+            downstream_layer = layer
 
     def update_weight(self, rate):
         """
