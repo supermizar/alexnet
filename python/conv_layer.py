@@ -116,6 +116,10 @@ class ConvLayer(object):
         for filter in self.filters:
             filter.update(self.learning_rate)
 
+    def calc_hidden_layer_delta(self, downstream_layer):
+        downstream_delta = np.dot(downstream_layer.trans_matrix.transpose(), downstream_layer.delta_array).reshape(self.output_array.shape)
+        self.bp_sensitivity_map(downstream_delta, self.activator)
+
     @staticmethod
     def calculate_output_size(input_size,
                               filter_size, zero_padding, stride):
@@ -169,7 +173,9 @@ def conv(input_array,
 
 
 def get_patch(input_array, i, j, kernel_width, kernel_height, stride):
-    return input_array[:, i*stride:i*stride+kernel_width, j*stride:j*stride+kernel_height]
+    if len(input_array.shape) > 2:
+        return input_array[:, i*stride:i*stride+kernel_width, j*stride:j*stride+kernel_height]
+    return input_array[i*stride:i*stride+kernel_width, j*stride:j*stride+kernel_height]
 
 
 def padding(input_array, zp):
