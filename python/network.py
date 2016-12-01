@@ -38,10 +38,8 @@ class Network(object):
         """
         update weights of each connection or filter
         """
-        for layer in self.layers[:-1]:
-            for node in layer.nodes:
-                for conn in node.downstream:
-                    conn.update_weight(rate)
+        for layer in self.layers:
+            layer.update_weight(rate)
 
     def calc_gradient(self):
         """

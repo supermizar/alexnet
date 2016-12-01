@@ -24,10 +24,13 @@ class FcLayer(object):
 
     def calc_hidden_layer_delta(self, downstream_layer):
         derivative = np.array([self.activator.backward(out) for out in self.output_array])
-        self.delta_array = derivative * np.dot(downstream_layer.trans_matrix.transpose(), downstream_layer.delta_array)
+        self.delta_array = derivative * downstream_layer.get_transformed_delta()
 
     def update_weight(self, rate):
         self.trans_matrix += rate * np.dot(self.delta_array.reshape([len(self.delta_array),1]),self.input_array.reshape([1, self.input_1dim]))
+
+    def get_transformed_delta(self):
+        return np.dot(self.trans_matrix.transpose(), self.delta_array)
 
 
 

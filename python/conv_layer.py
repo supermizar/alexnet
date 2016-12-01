@@ -41,6 +41,7 @@ class ConvLayer(object):
         activator: activator of upstream layer
         """
         # handle stride, expand sensitivity map
+        self.current_layer_delta_array = sensitivity_array
         expanded_array = self.expand_sensitivity_map(
             sensitivity_array)
         # full conv, do zp to sensitivity map
@@ -117,8 +118,13 @@ class ConvLayer(object):
             filter.update(self.learning_rate)
 
     def calc_hidden_layer_delta(self, downstream_layer):
-        downstream_delta = np.dot(downstream_layer.trans_matrix.transpose(), downstream_layer.delta_array).reshape(self.output_array.shape)
+        downstream_delta = downstream_layer.get_transformed_delta().reshape(self.output_array.shape)
         self.bp_sensitivity_map(downstream_delta, self.activator)
+
+    def update_weight(self, rate):
+        self.learning_rate = rate
+        self.bp_gradient(self.current_layer_delta_array)
+        self.update()
 
     @staticmethod
     def calculate_output_size(input_size,
@@ -144,6 +150,9 @@ class ConvLayer(object):
 
     def get_output(self):
         return self.output_array
+
+    def get_transformed_delta(self):
+        return self.delta_array
 
 
 # do element wise operation to numpy array
