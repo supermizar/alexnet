@@ -31,7 +31,7 @@ class Network(object):
         output_layer.calc_output_layer_delta(label)
         downstream_layer = output_layer
         for layer in self.layers[-2::-1]:
-            layer.calc_hidden_layer_delta(downstream_layer)
+            layer.calc_layer_delta(downstream_layer)
             downstream_layer = layer
 
     def update_weight(self, rate):

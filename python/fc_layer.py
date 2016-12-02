@@ -23,7 +23,7 @@ class FcLayer(object):
         derivative = np.array([self.activator.backward(out) for out in self.output_array])
         self.delta_array = derivative * (label - self.output_array)
 
-    def calc_hidden_layer_delta(self, downstream_layer):
+    def calc_layer_delta(self, downstream_layer):
         derivative = np.array([self.activator.backward(out) for out in self.output_array])
         self.delta_array = derivative * downstream_layer.get_transformed_delta()
 

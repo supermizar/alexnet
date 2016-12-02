@@ -117,7 +117,7 @@ class ConvLayer(object):
         for filter in self.filters:
             filter.update(self.learning_rate)
 
-    def calc_hidden_layer_delta(self, downstream_layer):
+    def calc_layer_delta(self, downstream_layer):
         downstream_delta = downstream_layer.get_transformed_delta().reshape(self.output_array.shape)
         self.bp_sensitivity_map(downstream_delta, self.activator)
 
