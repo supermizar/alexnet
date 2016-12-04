@@ -1,3 +1,5 @@
+import time
+indent = '   '
 class Network(object):
     def __init__(self):
         self.layers = []
@@ -19,27 +21,52 @@ class Network(object):
         """
         train network with one sample
         """
+        print 'Training with one sample started'
+        print indent + 'Procedure predict started'
+        clk1 = time.clock()
         self.predict(sample)
+        clk2 = time.clock()
+        print indent + 'Procedure predict finished, time cost(s):' + str(clk2 - clk1)
+        print indent + 'Procedure delta calculation started'
         self.calc_delta(label)
+        clk3 = time.clock()
+        print indent + 'Procedure delta calculation finished, time cost(s):' + str(clk3 - clk2)
+        print indent + 'Procedure weight update started'
         self.update_weight(rate)
+        clk4 = time.clock()
+        print indent + 'Procedure weight update finished, time cost(s):' + str(clk4 - clk3)
+        print 'Training with one sample finished'
 
     def calc_delta(self, label):
         """
         calc delta of each layer
         """
         output_layer = self.layers[-1]
+        layer_index = len(self.layers)
+        clk1 = time.clock()
         output_layer.calc_output_layer_delta(label)
+        clk2 = time.clock()
+        print 2*indent + "Delta calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         downstream_layer = output_layer
         for layer in self.layers[-2::-1]:
+            layer_index -= 1
+            clk1 = time.clock()
             layer.calc_layer_delta(downstream_layer)
+            clk2 = time.clock()
+            print 2*indent + "Delta calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
             downstream_layer = layer
 
     def update_weight(self, rate):
         """
         update weights of each connection or filter
         """
+        layer_index = 1
         for layer in self.layers:
+            clk2 = time.clock()
             layer.update_weight(rate)
+            clk1 = time.clock()
+            print 2*indent + "Weight update of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
+            layer_index += 1
 
     def calc_gradient(self):
         """
@@ -62,9 +89,17 @@ class Network(object):
         """
         predict output according to input
         """
+        layer_index = 1
+        clk1 = time.clock()
         self.layers[0].forward(sample)
+        clk2 = time.clock()
+        print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         for i in range(1, len(self.layers)):
+            layer_index += 1
+            clk1 = time.clock()
             self.layers[i].forward(self.layers[i-1].get_output())
+            clk2 = time.clock()
+            print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         return self.layers[-1].get_output()
 
     def dump(self):

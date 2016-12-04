@@ -5,9 +5,9 @@ class FcLayer(object):
     def __init__(self, network, node_count, activator):
         self.output_array = np.zeros([node_count])
         self.bias_array = np.zeros([node_count])
-        self.input_shape = network.layers[-1].get_output().shape
-        self.input_1dim = reduce(lambda ret, dim: ret * dim, self.input_shape, 1)
-        self.trans_matrix = np.zeros([node_count, self.input_1dim])
+        input_shape = network.layers[-1].get_output().shape
+        self.input_1dim = reduce(lambda ret, dim: ret * dim, input_shape, 1)
+        self.trans_matrix = np.random.uniform(0.1, 0.3, [node_count, self.input_1dim])
         self.activator = activator
         network.append_layer(self)
 
