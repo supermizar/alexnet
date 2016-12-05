@@ -62,9 +62,9 @@ class Network(object):
         """
         layer_index = 1
         for layer in self.layers:
-            clk2 = time.clock()
-            layer.update_weight(rate)
             clk1 = time.clock()
+            layer.update_weight(rate)
+            clk2 = time.clock()
             print 2*indent + "Weight update of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
             layer_index += 1
 
