@@ -7,9 +7,9 @@ class ConvLayerHidden(ConvLayer):
                  zero_padding, stride, activator,
                  learning_rate):
         upstream_layer = network.layers[-1]
-        input_width = upstream_layer.output_width
-        input_height = upstream_layer.output_height
-        channel_number = upstream_layer.filter_number
+        input_width = upstream_layer.get_output().shape[1]
+        input_height = upstream_layer.get_output().shape[2]
+        channel_number = upstream_layer.get_output().shape[0]
         ConvLayer.__init__(self, network, input_width, input_height,
                            channel_number, filter_width,
                            filter_height, filter_number,

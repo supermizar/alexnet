@@ -1,4 +1,4 @@
-import numpy as np
+from utils import *
 
 
 class ConvLayer(object):
@@ -83,7 +83,7 @@ class ConvLayer(object):
         # construct new sensitivity_map
         expand_array = np.zeros((depth, expanded_height,
                                  expanded_width))
-        # copy error from snesitivity map
+        # copy error from sensitivity map
         for i in range(self.output_height):
             for j in range(self.output_width):
                 i_pos = i * self.stride
@@ -155,68 +155,6 @@ class ConvLayer(object):
         return self.delta_array
 
 
-# do element wise operation to numpy array
-def element_wise_op(array, op):
-    for i in np.nditer(array, op_flags=['readwrite']):
-        i[...] = op(i)
-
-
-def conv(input_array,
-         kernel_array,
-         output_array,
-         stride, bias):
-    """
-    calculate convolution for 2D 3D
-    """
-    channel_number = input_array.ndim
-    output_width = output_array.shape[1]
-    output_height = output_array.shape[0]
-    kernel_width = kernel_array.shape[-1]
-    kernel_height = kernel_array.shape[-2]
-    for i in range(output_height):
-        for j in range(output_width):
-            output_array[i][j] = (
-                                     get_patch(input_array, i, j, kernel_width,
-                                               kernel_height, stride) * kernel_array
-                                 ).sum() + bias
-
-
-def get_patch(input_array, i, j, kernel_width, kernel_height, stride):
-    if len(input_array.shape) > 2:
-        return input_array[:, i*stride:i*stride+kernel_width, j*stride:j*stride+kernel_height]
-    return input_array[i*stride:i*stride+kernel_width, j*stride:j*stride+kernel_height]
-
-
-def padding(input_array, zp):
-    """
-    add zero padding for 2D 3D
-    """
-    if zp == 0:
-        return input_array
-    else:
-        if input_array.ndim == 3:
-            input_width = input_array.shape[2]
-            input_height = input_array.shape[1]
-            input_depth = input_array.shape[0]
-            padded_array = np.zeros((
-                input_depth,
-                input_height + 2 * zp,
-                input_width + 2 * zp))
-            padded_array[:,
-            zp: zp + input_height,
-            zp: zp + input_width] = input_array
-            return padded_array
-        elif input_array.ndim == 2:
-            input_width = input_array.shape[1]
-            input_height = input_array.shape[0]
-            padded_array = np.zeros((
-                input_height + 2 * zp,
-                input_width + 2 * zp))
-            padded_array[zp: zp + input_height,
-            zp: zp + input_width] = input_array
-            return padded_array
-
-
 class Filter(object):
     def __init__(self, width, height, depth):
         self.weights = np.random.uniform(-1e-4, 1e-4,
@@ -239,5 +177,3 @@ class Filter(object):
     def update(self, learning_rate):
         self.weights -= learning_rate * self.weights_grad
         self.bias -= learning_rate * self.bias_grad
-
-

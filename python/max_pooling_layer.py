@@ -7,9 +7,9 @@ class MaxPoolingLayer(object):
     def __init__(self, network,filter_width,
                  filter_height, stride):
         upstream_layer = network.layers[-1]
-        self.input_width = upstream_layer.output_width
-        self.input_height = upstream_layer.output_height
-        self.channel_number = upstream_layer.filter_number
+        self.input_width = upstream_layer.get_output().shape[1]
+        self.input_height = upstream_layer.get_output().shape[2]
+        self.channel_number = upstream_layer.get_output().shape[0]
         self.filter_width = filter_width
         self.filter_height = filter_height
         self.stride = stride
