@@ -4,6 +4,7 @@ from conv_layer import ConvLayer
 from conv_layer_hidden import ConvLayerHidden
 from activator import ReluActivator as Relu
 from max_pooling_layer import MaxPoolingLayer
+from softmax_layer import SoftmaxLayer
 import numpy as np
 
 if __name__ == '__main__':
@@ -16,5 +17,5 @@ if __name__ == '__main__':
     ConvLayerHidden(net, 3, 3, 24, 2, 3, Relu(), 0.05)
     MaxPoolingLayer(net, 2, 2, 1)
     FcLayer(net, 5, Relu())
-    FcLayer(net, 10, Relu())
+    SoftmaxLayer(net, 10)
     net.train_one_sample(fake_label, fake_image, 0.1)
