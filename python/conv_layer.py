@@ -132,7 +132,7 @@ class ConvLayer(object):
         return (input_size - filter_size +
                 2 * zero_padding) / stride + 1
 
-    def forward(self, input_array):
+    def forward(self, input_array, training=False):
         """
         calc output of conv layer
         result saved in self.output_array

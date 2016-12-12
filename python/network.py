@@ -24,7 +24,7 @@ class Network(object):
         print 'Training with one sample started'
         print indent + 'Procedure predict started'
         clk1 = time.clock()
-        self.predict(sample)
+        self.predict(sample, training=True)
         clk2 = time.clock()
         print indent + 'Procedure predict finished, time cost(s):' + str(clk2 - clk1)
         print indent + 'Procedure delta calculation started'
@@ -85,19 +85,19 @@ class Network(object):
         self.calc_delta(label)
         self.calc_gradient()
 
-    def predict(self, sample):
+    def predict(self, sample, training=False):
         """
         predict output according to input
         """
         layer_index = 1
         clk1 = time.clock()
-        self.layers[0].forward(sample)
+        self.layers[0].forward(sample, training=training)
         clk2 = time.clock()
         print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         for i in range(1, len(self.layers)):
             layer_index += 1
             clk1 = time.clock()
-            self.layers[i].forward(self.layers[i-1].get_output())
+            self.layers[i].forward(self.layers[i-1].get_output(), training=training)
             clk2 = time.clock()
             print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         return self.layers[-1].get_output()

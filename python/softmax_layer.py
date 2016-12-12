@@ -8,7 +8,7 @@ class SoftmaxLayer(FcLayer):
     def __init__(self, network, node_count):
         FcLayer.__init__(self, network, node_count, Softmax())
 
-    def forward(self, input_array):
+    def forward(self, input_array, training=False):
         self.input_array = input_array.reshape(self.input_1dim)
         self.output_array = np.dot(self.trans_matrix, self.input_array) + self.bias_array
         self.output_array = self.activator.forward(self.output_array)

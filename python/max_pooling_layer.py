@@ -21,7 +21,7 @@ class MaxPoolingLayer(object):
                                       self.output_height, self.output_width))
         network.append_layer(self)
 
-    def forward(self, input_array):
+    def forward(self, input_array, training=False):
         self.input_array = input_array
         for d in range(self.channel_number):
             for i in range(self.output_height):

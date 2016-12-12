@@ -14,7 +14,7 @@ class FcLayer(object):
     def get_output(self):
         return self.output_array
 
-    def forward(self, input_array):
+    def forward(self, input_array, training=False):
         self.input_array = input_array.reshape(self.input_1dim)
         self.output_array = np.dot(self.trans_matrix, self.input_array) + self.bias_array
         self.output_array = np.array([self.activator.forward(value) for value in self.output_array])

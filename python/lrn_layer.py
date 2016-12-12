@@ -11,7 +11,7 @@ class LrnLayer(object):
         self.output_array = np.zeros(self.input_array.shape)
         network.append_layer(self)
 
-    def forward(self, input_array):
+    def forward(self, input_array, training=False):
         self.input_array = input_array
         self.normalize_matrix = np.zeros(input_array.shape)
         for i in range(0, input_array.shape[0]):
