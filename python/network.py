@@ -93,13 +93,18 @@ class Network(object):
         clk1 = time.clock()
         self.layers[0].forward(sample, training=training)
         clk2 = time.clock()
-        print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
+        if training:
+            print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         for i in range(1, len(self.layers)):
             layer_index += 1
             clk1 = time.clock()
             self.layers[i].forward(self.layers[i-1].get_output(), training=training)
             clk2 = time.clock()
-            print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
+            if training:
+                print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
+        if not training:
+            print "***Predict result based on alexnet model***"
+            print self.layers[-1].get_output()
         return self.layers[-1].get_output()
 
     def dump(self):
