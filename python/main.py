@@ -39,7 +39,9 @@ if __name__ == '__main__':
 
     SoftmaxLayer(net, 1000)
 
-    net.train_one_sample(label, raccoon_image, 0.1)
+    for i in range(0, 4):
+        net.train_one_sample(label, raccoon_image, 0.1)
+        print net.predict(raccoon_image, training=False)
 
     # fake_image = np.random.uniform(0, 255, [3, 25, 25])
     # fake_label = np.zeros([10])
