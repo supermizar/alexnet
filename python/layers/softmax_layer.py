@@ -1,6 +1,7 @@
-from fc_layer import FcLayer
-from activator import Softmax
 import numpy as np
+
+from fc_layer import FcLayer
+from python.utils.activator import Softmax
 
 
 class SoftmaxLayer(FcLayer):

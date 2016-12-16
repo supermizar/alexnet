@@ -1,6 +1,7 @@
 import numpy as np
-from utils import get_patch
-from utils import get_max_index
+
+from python.utils.utils import get_max_index
+from python.utils.utils import get_patch
 
 
 class MaxPoolingLayer(object):

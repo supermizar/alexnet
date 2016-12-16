@@ -1,5 +1,4 @@
 from conv_layer import ConvLayer
-import numpy as np
 
 
 class ConvLayerHidden(ConvLayer):

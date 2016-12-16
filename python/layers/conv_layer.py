@@ -1,4 +1,4 @@
-from utils import *
+from python.utils.utils import *
 
 
 class ConvLayer(object):
