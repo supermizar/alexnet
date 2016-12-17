@@ -12,3 +12,7 @@ class SciPlot(object):
 
     def show(self):
         self.pl.show()
+
+    def bar(self, x, y):
+        self.pl.bar(x, y, align="center", width=0.5, alpha=0.5)
+        self.pl.show()
