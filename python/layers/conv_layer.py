@@ -6,7 +6,7 @@ class ConvLayer(object):
                  channel_number, filter_width,
                  filter_height, filter_number,
                  zero_padding, stride, activator,
-                 learning_rate):
+                 learning_rate, momentum_rate=0.0):
         self.input_width = input_width
         self.input_height = input_height
         self.channel_number = channel_number
@@ -31,6 +31,7 @@ class ConvLayer(object):
                                        filter_height, self.channel_number))
         self.activator = activator
         self.learning_rate = learning_rate
+        self.momentum_rate = momentum_rate
         network.append_layer(self)
 
     def bp_sensitivity_map(self, sensitivity_array,
@@ -115,7 +116,7 @@ class ConvLayer(object):
         update weight according to gradient descend
         """
         for filter in self.filters:
-            filter.update(self.learning_rate)
+            filter.update(self.learning_rate, self.momentum_rate)
 
     def calc_layer_delta(self, downstream_layer):
         downstream_delta = downstream_layer.get_transformed_delta().reshape(self.output_array.shape)
@@ -160,9 +161,10 @@ class Filter(object):
         self.weights = np.random.uniform(-1e-4, 1e-4,
                                          (depth, height, width))
         self.bias = 0
-        self.weights_grad = np.zeros(
-            self.weights.shape)
+        self.weights_grad = np.zeros(self.weights.shape)
+        self.weights_grad_cache = np.zeros(self.weights.shape)
         self.bias_grad = 0
+        self.bias_grad_cache = 0
 
     def __repr__(self):
         return 'filter weights:\n%s\nbias:\n%s' % (
@@ -174,6 +176,8 @@ class Filter(object):
     def get_bias(self):
         return self.bias
 
-    def update(self, learning_rate):
-        self.weights -= learning_rate * self.weights_grad
-        self.bias -= learning_rate * self.bias_grad
+    def update(self, learning_rate, momentum_rate):
+        self.weights -= learning_rate * self.weights_grad + momentum_rate * self.weights_grad_cache
+        self.bias -= learning_rate * self.bias_grad + momentum_rate * self.bias_grad_cache
+        self.weights_grad_cache = self.weights_grad
+        self.bias_grad_cache = self.bias_grad

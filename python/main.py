@@ -1,7 +1,8 @@
 import numpy as np
 from layers.conv_layer import ConvLayer as CL
 from layers.conv_layer_matrix import ConvLayer as CLM
-from layers.conv_layer_hidden import ConvLayerHidden
+from layers.conv_layer_hidden import ConvLayerHidden as CLh
+from layers.conv_layer_matrix_hidden import ConvLayerHidden as CLMh
 from layers.fc_layer import FcLayer
 from layers.lrn_layer import LrnLayer
 from layers.max_pooling_layer import MaxPoolingLayer
@@ -56,43 +57,45 @@ if __name__ == '__main__':
     net = Network()
 
     # sp = SciPlot('Curve of softmax output')
-    CL(net, 25, 25, 3, 11, 11, 48, 2, 4, Relu(), 0.05)
+    CL(net, 25, 25, 3, 11, 11, 48, 2, 4, Relu(), 0.05, momentum_rate=0.9)
+    # CLh(net, 2, 2, 10, 1, 2, Relu(), 0.05)
     LrnLayer(net, 2, 0.0001, 5, 0.75)
     MaxPoolingLayer(net, 3, 3, 2)
 
-    FcLayer(net, 5, Relu())
+    FcLayer(net, 5, Relu(), momentum_rate=0.0)
     DropoutLayer(net,dropout_prob=0.5)
-    SoftmaxLayer(net, 10)
+    SoftmaxLayer(net, 10, momentum_rate=0.0)
 
-    net1 = Network()
-
-    # sp = SciPlot('Curve of softmax output')
-    CLM(net1, 25, 25, 3, 11, 11, 48, 2, 4, Relu(), 0.05)
-    LrnLayer(net1, 2, 0.0001, 5, 0.75)
-    MaxPoolingLayer(net1, 3, 3, 2)
-
-    FcLayer(net1, 5, Relu())
-    DropoutLayer(net1, dropout_prob=0.5)
-    SoftmaxLayer(net1, 10)
-    # sp.plot(net.predict(fake_image, training=False), desc='episode-' + str(0))
-    # for i in range(0, 5):
-    #     net.train_one_sample(fake_label, fake_image, 1)
-    #     sp.plot(net.predict(fake_image, training=False), desc='episode-'+str(i+1))
+    # net1 = Network()
     #
+    sp = SciPlot('Curve of softmax output')
+    # CLM(net1, 25, 25, 3, 11, 11, 48, 2, 4, Relu(), 0.05)
+    # CLMh(net1, 2, 2, 10, 1, 2, Relu(), 0.05)
+    # LrnLayer(net1, 2, 0.0001, 5, 0.75)
+    # MaxPoolingLayer(net1, 3, 3, 2)
+    # #
+    # FcLayer(net1, 5, Relu())
+    # DropoutLayer(net1, dropout_prob=0.5)
+    # SoftmaxLayer(net1, 10)
+    sp.plot(net.predict(fake_image, training=False), desc='episode-' + str(0))
+    for i in range(0, 5):
+        net.train_one_sample(fake_label, fake_image, 1)
+        sp.plot(net.predict(fake_image, training=False), desc='episode-'+str(i+1))
+
+    sp.show()
+
+    # net.train_one_sample(fake_label, fake_image, 1, showlog=False)
+    # net1.train_one_sample(fake_label, fake_image, 1, showlog=False)
+    #
+    # sp = SciPlot('Predict time of each layers')
+    # sp.bar(net.indexes, net.predict_time)
+    # sp.bar(net1.indexes + 0.35, net1.predict_time, color='greenyellow')
     # sp.show()
-
-    net.train_one_sample(fake_label, fake_image, 1, showlog=False)
-    net1.train_one_sample(fake_label, fake_image, 1, showlog=False)
-
-    sp = SciPlot('Predict time of each layers')
-    sp.bar(net.indexes, net.predict_time)
-    sp.bar(net1.indexes + 0.35, net1.predict_time, color='greenyellow')
-    sp.show()
-    sp = SciPlot('Delta calculation time of each layers')
-    sp.bar(net.indexes, net.delta_calc_time)
-    sp.bar(net1.indexes + 0.35, net1.delta_calc_time, color='greenyellow')
-    sp.show()
-    sp = SciPlot('Weight update time of each layers')
-    sp.bar(net.indexes, net.update_weight_time)
-    sp.bar(net1.indexes + 0.35, net1.update_weight_time, color='greenyellow')
-    sp.show()
+    # sp = SciPlot('Delta calculation time of each layers')
+    # sp.bar(net.indexes, net.delta_calc_time)
+    # sp.bar(net1.indexes + 0.35, net1.delta_calc_time, color='greenyellow')
+    # sp.show()
+    # sp = SciPlot('Weight update time of each layers')
+    # sp.bar(net.indexes, net.update_weight_time)
+    # sp.bar(net1.indexes + 0.35, net1.update_weight_time, color='greenyellow')
+    # sp.show()

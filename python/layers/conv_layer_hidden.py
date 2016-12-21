@@ -5,7 +5,7 @@ class ConvLayerHidden(ConvLayer):
     def __init__(self, network, filter_width,
                  filter_height, filter_number,
                  zero_padding, stride, activator,
-                 learning_rate):
+                 learning_rate, momentum_rate=0.0):
         upstream_layer = network.layers[-1]
         input_width = upstream_layer.get_output().shape[1]
         input_height = upstream_layer.get_output().shape[2]
@@ -14,6 +14,6 @@ class ConvLayerHidden(ConvLayer):
                            channel_number, filter_width,
                            filter_height, filter_number,
                            zero_padding, stride, activator,
-                           learning_rate)
+                           learning_rate, momentum_rate=momentum_rate)
 
 
