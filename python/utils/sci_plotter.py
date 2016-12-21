@@ -13,6 +13,15 @@ class SciPlot(object):
     def show(self):
         self.pl.show()
 
-    def bar(self, x, y):
-        self.pl.bar(x, y, align="center", width=0.5, alpha=0.5)
-        self.pl.show()
+    def bar(self, X, Y, color='lightskyblue'):
+        rects = self.pl.bar(X, Y, width=0.35, facecolor=color, edgecolor='white', yerr=0.000000000001)
+
+        def autolabel(rects):
+            # attach some text labels
+            for rect in rects:
+                height = rect.get_height()
+                self.pl.text(rect.get_x() + rect.get_width() / 2., 1.05 * height,
+                        '%.4f' % height,
+                        ha='center', va='bottom')
+        autolabel(rects)
+

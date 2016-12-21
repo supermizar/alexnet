@@ -1,4 +1,5 @@
 import time
+import numpy as np
 indent = '   '
 class Network(object):
     def __init__(self):
@@ -23,23 +24,23 @@ class Network(object):
         train network with one sample
         """
         self.showlog=showlog
-        self.indexes = [x+1 for x in range(0, len(self.layers))]
+        self.indexes = np.array([x+1 for x in range(0, len(self.layers))])
         if showlog:
             print 'Training with one sample started'
             print indent + 'Procedure predict started'
-        clk1 = time.clock()
+        clk1 = time.time()
         self.predict(sample, training=True)
-        clk2 = time.clock()
+        clk2 = time.time()
         if showlog:
             print indent + 'Procedure predict finished, time cost(s):' + str(clk2 - clk1)
             print indent + 'Procedure delta calculation started'
         self.calc_delta(label)
-        clk3 = time.clock()
+        clk3 = time.time()
         if showlog:
             print indent + 'Procedure delta calculation finished, time cost(s):' + str(clk3 - clk2)
             print indent + 'Procedure weight update started'
         self.update_weight(rate)
-        clk4 = time.clock()
+        clk4 = time.time()
         if showlog:
             print indent + 'Procedure weight update finished, time cost(s):' + str(clk4 - clk3)
             print 'Training with one sample finished'
@@ -51,18 +52,18 @@ class Network(object):
         self.delta_calc_time=[]
         output_layer = self.layers[-1]
         layer_index = len(self.layers)
-        clk1 = time.clock()
+        clk1 = time.time()
         output_layer.calc_output_layer_delta(label)
-        clk2 = time.clock()
+        clk2 = time.time()
         if self.showlog:
             print 2*indent + "Delta calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         self.delta_calc_time.insert(0, clk2-clk1)
         downstream_layer = output_layer
         for layer in self.layers[-2::-1]:
             layer_index -= 1
-            clk1 = time.clock()
+            clk1 = time.time()
             layer.calc_layer_delta(downstream_layer)
-            clk2 = time.clock()
+            clk2 = time.time()
             if self.showlog:
                 print 2*indent + "Delta calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
             self.delta_calc_time.insert(0, clk2-clk1)
@@ -75,9 +76,9 @@ class Network(object):
         self.update_weight_time=[]
         layer_index = 1
         for layer in self.layers:
-            clk1 = time.clock()
+            clk1 = time.time()
             layer.update_weight(rate)
-            clk2 = time.clock()
+            clk2 = time.time()
             if self.showlog:
                 print 2*indent + "Weight update of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
             self.update_weight_time.append(clk2 - clk1)
@@ -106,17 +107,17 @@ class Network(object):
         """
         self.predict_time=[]
         layer_index = 1
-        clk1 = time.clock()
+        clk1 = time.time()
         self.layers[0].forward(sample, training=training)
-        clk2 = time.clock()
+        clk2 = time.time()
         self.predict_time.append(clk2 - clk1)
         if training and self.showlog:
             print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
         for i in range(1, len(self.layers)):
             layer_index += 1
-            clk1 = time.clock()
+            clk1 = time.time()
             self.layers[i].forward(self.layers[i-1].get_output(), training=training)
-            clk2 = time.clock()
+            clk2 = time.time()
             if training and self.showlog:
                 print 2*indent + "Forward calculation of layer " + str(layer_index) + " finished, time cost(s): " + str(clk2 - clk1)
             self.predict_time.append(clk2 - clk1)

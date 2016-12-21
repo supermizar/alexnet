@@ -74,3 +74,47 @@ def padding(input_array, zp):
             padded_array[zp: zp + input_height,
             zp: zp + input_width] = input_array
             return padded_array
+
+
+def conv_matrix(input_array,
+                kernel_array,
+                kernel_width,
+                kernel_height,
+                output_array,
+                stride, bias):
+    """
+    calculate convolution for 2D 3D
+    """
+    channel_number = input_array.ndim
+    output_width = output_array.shape[2]
+    output_height = output_array.shape[1]
+    input_transform = np.zeros((output_height * output_width, kernel_array.shape[0]))
+    for i in range(output_height):
+        for j in range(output_width):
+            input_transform[j + output_height * i, :] = get_patch(input_array, i, j, kernel_width, kernel_height,
+                                                                  stride).reshape(kernel_array.shape[0])
+    output_array_transform = np.dot(input_transform, kernel_array)
+
+    return output_array_transform.reshape(output_array.shape)
+
+
+def conv_matrix_ex(input_array,
+                   kernel_array,
+                   kernel_width,
+                   kernel_height,
+                   output_array,
+                   stride, bias):
+    """
+    calculate convolution for 2D 3D
+    """
+    channel_number = input_array.ndim
+    output_width = output_array.shape[1]
+    output_height = output_array.shape[0]
+    input_transform = np.zeros((output_height * output_width, kernel_array.shape[0]))
+    for i in range(output_height):
+        for j in range(output_width):
+            input_transform[j + output_height * i, :] = get_patch(input_array, i, j, kernel_width, kernel_height,
+                                                                  stride).reshape(kernel_array.shape[0])
+    output_array_transform = np.dot(input_transform, kernel_array)
+
+    return output_array_transform.reshape(output_array.shape)
