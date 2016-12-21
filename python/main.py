@@ -57,14 +57,14 @@ if __name__ == '__main__':
     net = Network()
 
     # sp = SciPlot('Curve of softmax output')
-    CL(net, 25, 25, 3, 11, 11, 48, 2, 4, Relu(), 0.05, momentum_rate=0.9)
+    CL(net, 25, 25, 3, 11, 11, 48, 2, 4, Relu(), 0.05, momentum_rate=0.0, decay_rate=0.1)
     # CLh(net, 2, 2, 10, 1, 2, Relu(), 0.05)
     LrnLayer(net, 2, 0.0001, 5, 0.75)
     MaxPoolingLayer(net, 3, 3, 2)
 
-    FcLayer(net, 5, Relu(), momentum_rate=0.0)
+    FcLayer(net, 5, Relu(), momentum_rate=0.0, decay_rate=0.1)
     DropoutLayer(net,dropout_prob=0.5)
-    SoftmaxLayer(net, 10, momentum_rate=0.0)
+    SoftmaxLayer(net, 10, momentum_rate=0.0, decay_rate=0.1)
 
     # net1 = Network()
     #

@@ -2,7 +2,7 @@ import numpy as np
 
 
 class FcLayer(object):
-    def __init__(self, network, node_count, activator, momentum_rate=0.0):
+    def __init__(self, network, node_count, activator, momentum_rate=0.0, decay_rate=0.0):
         self.output_array = np.zeros([node_count])
         self.bias_array = np.zeros([node_count])
         self.bias_gradient_cache = np.zeros([node_count])
@@ -12,6 +12,7 @@ class FcLayer(object):
         self.trans_gradient_cache = np.zeros(self.trans_matrix.shape)
         self.activator = activator
         self.momentum_rate = momentum_rate
+        self.decay_rate = decay_rate
         network.append_layer(self)
 
     def get_output(self):
@@ -33,8 +34,8 @@ class FcLayer(object):
     def update_weight(self, rate):
         trans_gradient = np.dot(self.delta_array.reshape([len(self.delta_array),1]),self.input_array.reshape([1, self.input_1dim]))
         bias_gradient = self.delta_array
-        self.trans_matrix += rate * trans_gradient + self.momentum_rate * self.trans_gradient_cache
-        self.bias_array += rate * bias_gradient + self.momentum_rate * self.bias_gradient_cache
+        self.trans_matrix += rate * trans_gradient + self.momentum_rate * self.trans_gradient_cache - rate * self.decay_rate * self.trans_matrix
+        self.bias_array += rate * bias_gradient + self.momentum_rate * self.bias_gradient_cache - rate * self.decay_rate * self.bias_array
         self.trans_gradient_cache = trans_gradient
         self.bias_gradient_cache = bias_gradient
 

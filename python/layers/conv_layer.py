@@ -6,7 +6,7 @@ class ConvLayer(object):
                  channel_number, filter_width,
                  filter_height, filter_number,
                  zero_padding, stride, activator,
-                 learning_rate, momentum_rate=0.0):
+                 learning_rate, momentum_rate=0.0, decay_rate=0.0):
         self.input_width = input_width
         self.input_height = input_height
         self.channel_number = channel_number
@@ -32,6 +32,7 @@ class ConvLayer(object):
         self.activator = activator
         self.learning_rate = learning_rate
         self.momentum_rate = momentum_rate
+        self.decay_rate = decay_rate
         network.append_layer(self)
 
     def bp_sensitivity_map(self, sensitivity_array,
@@ -116,7 +117,7 @@ class ConvLayer(object):
         update weight according to gradient descend
         """
         for filter in self.filters:
-            filter.update(self.learning_rate, self.momentum_rate)
+            filter.update(self.learning_rate, self.momentum_rate, self.decay_rate)
 
     def calc_layer_delta(self, downstream_layer):
         downstream_delta = downstream_layer.get_transformed_delta().reshape(self.output_array.shape)
@@ -176,8 +177,8 @@ class Filter(object):
     def get_bias(self):
         return self.bias
 
-    def update(self, learning_rate, momentum_rate):
-        self.weights -= learning_rate * self.weights_grad + momentum_rate * self.weights_grad_cache
-        self.bias -= learning_rate * self.bias_grad + momentum_rate * self.bias_grad_cache
+    def update(self, learning_rate, momentum_rate, decay_rate):
+        self.weights -= learning_rate * self.weights_grad + momentum_rate * self.weights_grad_cache - learning_rate * decay_rate * self.weights
+        self.bias -= learning_rate * self.bias_grad + momentum_rate * self.bias_grad_cache - learning_rate * decay_rate * self.bias
         self.weights_grad_cache = self.weights_grad
         self.bias_grad_cache = self.bias_grad
