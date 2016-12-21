@@ -27,7 +27,7 @@ class ConvLayer(object):
                                       self.output_height, self.output_width))
         self.filters = np.random.uniform(-1e-4, 1e-4,
                                          (filter_width*filter_height*channel_number, filter_number))
-        self.bias = 0
+        self.bias = np.zeros(filter_number)
         self.activator = activator
         self.learning_rate = learning_rate
         network.append_layer(self)
@@ -103,8 +103,8 @@ class ConvLayer(object):
                                              filter[d].reshape(self.filter_height * self.filter_width),
                                              self.filter_width, self.filter_height,
                                              filter[d], 1, 0) * self.learning_rate
+            self.bias[f] -= expanded_array[f].sum()
             self.filters[:, f] = filter.reshape(self.filters[:, f].shape)
-            # filter.bias_grad = expanded_array[f].sum()
 
     def update(self):
         """

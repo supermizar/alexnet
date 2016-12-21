@@ -93,7 +93,7 @@ def conv_matrix(input_array,
         for j in range(output_width):
             input_transform[j + output_height * i, :] = get_patch(input_array, i, j, kernel_width, kernel_height,
                                                                   stride).reshape(kernel_array.shape[0])
-    output_array_transform = np.dot(input_transform, kernel_array)
+    output_array_transform = np.dot(input_transform, kernel_array) + bias
 
     return output_array_transform.reshape(output_array.shape)
 
@@ -115,6 +115,6 @@ def conv_matrix_ex(input_array,
         for j in range(output_width):
             input_transform[j + output_height * i, :] = get_patch(input_array, i, j, kernel_width, kernel_height,
                                                                   stride).reshape(kernel_array.shape[0])
-    output_array_transform = np.dot(input_transform, kernel_array)
+    output_array_transform = np.dot(input_transform, kernel_array) + bias
 
     return output_array_transform.reshape(output_array.shape)
